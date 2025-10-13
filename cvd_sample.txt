@@ -1,0 +1,72 @@
+
+/*
+该脚本为CVD设备反应腔控制脚本。
+
+保留关键字：param, runtime, var, layer, step, flow, until
+
+变量说明：
+1、变量仅支持float型
+2、变量支持四则混合运算
+
+
+运算符：
+1、= 等于号
+2、数学运算符：+ - * / ( ) ^，同C语言
+3、=> 从当前值经过指定时间爬升到目标值
+4、! 取反运算
+5、条件运算符：==, !=, >, <, >=, <=，运算符优先级同C语言
+
+特殊变量：
+1、MFC后跟数字表示指定编号的MFC气体流量计
+2、V后跟数字表示指定编号的阀门
+3、PT后跟数字表示指定编号的压力计
+4、T后跟数字表示指定的温度值
+
+
+关于until关键字的说明：
+1、只能放在step段之外
+2、可以连续多行
+3、until后跟一个条件表达式，支持条件运算符
+4、条件运算符左侧必须是‘特殊变量’
+5、条件运算符右侧是运算表达式，表达式中可以使用立即数、特殊变量、变量，支持数学运算
+
+
+*/
+
+/* 使用 'param runtime' 定义的变量将显示在界面的变量窗口中，可实时更改数值 */
+param runtime x = 12; // global var 
+param runtime y = 32; // global var 
+
+/* 使用 'var' 定义局部变量 */
+var mfc_purge_flow = 1200.34;
+var mfc_vent_flow = 321.23;
+
+
+layer
+{
+    /* 定义一个Step，名为buff，执行时长为10秒 */
+    step "buff" 10
+    {
+        AFF = 1; // 使能AFF功能，AFF为内置命令，可能存在其它内置命令
+        mfc_vent_flow = (x + y) * 1000 / 0.2; // 支持四则混合运算
+        MFC12 = mfc_purge_flow; // MFC12流量计的流量值jump到目标值
+        MFC14 => mfc_vent_flow; // MFC12流量计的流量值Ramp到目标值，Ramp时间为step节点定义的时间
+
+        V32 = 1;  // valve on
+        V34 = 0; // valve off
+        
+    };
+
+    until MFC12 = 34332.12;
+    until MFC13 >= MFC12;
+    until MFC13 == MFC12;
+    until MFC14 <= MFC12 * (0.1 + mfc_vent_flow);
+
+    step "epi" 60
+    {
+       MFC6 flow MFC12; // MFC6流量计的流量值跟随MFC12
+       V32 = V34; // Valve23输出状态等于Valve34输出状态
+       V32 = !V34; // Valve23输出状态等于Valve34输出状态取反
+        
+    };
+}
