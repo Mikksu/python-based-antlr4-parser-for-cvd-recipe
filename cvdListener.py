@@ -125,21 +125,21 @@ class cvdListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by cvdParser#target.
-    def enterTarget(self, ctx:cvdParser.TargetContext):
+    # Enter a parse tree produced by cvdParser#lvalue.
+    def enterLvalue(self, ctx:cvdParser.LvalueContext):
         pass
 
-    # Exit a parse tree produced by cvdParser#target.
-    def exitTarget(self, ctx:cvdParser.TargetContext):
+    # Exit a parse tree produced by cvdParser#lvalue.
+    def exitLvalue(self, ctx:cvdParser.LvalueContext):
         pass
 
 
-    # Enter a parse tree produced by cvdParser#identExpr.
-    def enterIdentExpr(self, ctx:cvdParser.IdentExprContext):
+    # Enter a parse tree produced by cvdParser#dottedName.
+    def enterDottedName(self, ctx:cvdParser.DottedNameContext):
         pass
 
-    # Exit a parse tree produced by cvdParser#identExpr.
-    def exitIdentExpr(self, ctx:cvdParser.IdentExprContext):
+    # Exit a parse tree produced by cvdParser#dottedName.
+    def exitDottedName(self, ctx:cvdParser.DottedNameContext):
         pass
 
 
@@ -176,6 +176,15 @@ class cvdListener(ParseTreeListener):
 
     # Exit a parse tree produced by cvdParser#numberExpr.
     def exitNumberExpr(self, ctx:cvdParser.NumberExprContext):
+        pass
+
+
+    # Enter a parse tree produced by cvdParser#dottedNameExpr.
+    def enterDottedNameExpr(self, ctx:cvdParser.DottedNameExprContext):
+        pass
+
+    # Exit a parse tree produced by cvdParser#dottedNameExpr.
+    def exitDottedNameExpr(self, ctx:cvdParser.DottedNameExprContext):
         pass
 
 

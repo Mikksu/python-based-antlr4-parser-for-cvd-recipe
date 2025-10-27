@@ -45,11 +45,11 @@ stepBody
     ;
 
 assignment
-    : target ('=' | '=>') expr ';'
+    : lvalue ('=' | '=>') expr ';'
     ;
 
 flowFollow
-    : IDENT 'flow' IDENT ';'
+    : dottedName 'flow' dottedName ';'
     ;
 
 untilStmt
@@ -61,11 +61,15 @@ conditionExpr
     ;
 
 compOp
-    : '==' | '!=' | '>' | '<' | '>=' | '<='
+    : '==' | '!=' | '>=' | '<=' | '>' | '<'      // '=' deliberately excluded here
     ;
 
-target
-    : IDENT
+lvalue
+    : dottedName
+    ;
+
+dottedName
+    : IDENT ('.' IDENT)*        // e.g. TC_Ceilling.Mode, INJ.L1
     ;
 
 expr
@@ -75,7 +79,7 @@ expr
     | '!' expr                             # notExpr
     | '(' expr ')'                         # parenExpr
     | NUMBER                               # numberExpr
-    | IDENT                                # identExpr
+    | dottedName                           # dottedNameExpr
     ;
 
 comment
@@ -88,15 +92,15 @@ comment
 //----------------------
 
 LINE_COMMENT
-    : '//' ~[\r\n]* -> skip
+    : '//' ~[\r\n]* -> channel(HIDDEN)
     ;
 
 BLOCK_COMMENT
-    : '/*' .*? '*/' -> skip
+    : '/*' .*? '*/' -> channel(HIDDEN)
     ;
 
 IDENT
-    : [a-zA-Z_][a-zA-Z0-9_]*   // Includes names like MFC12, V34, PT1, T5, etc.
+    : [a-zA-Z_][a-zA-Z0-9_]*   
     ;
 
 STRING

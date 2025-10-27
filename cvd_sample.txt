@@ -36,10 +36,23 @@
 /* 使用 'param runtime' 定义的变量将显示在界面的变量窗口中，可实时更改数值 */
 param runtime x = 12; // global var 
 param runtime y = 32; // global var 
+param runtime T_Epi = 1240;
+param runtime T_PrePower = 1000.0;
+
+param runtime INJ_TOTL_Flow = 10000.2;
+param runtime INJ_L1_RATIO = 0.2;
+param runtime INJ_L2_RATIO = 0.2;
+param runtime INJ_L3_RATIO = 0.1;
+param runtime INJ_L4_RATIO = 0.3;
+param runtime INJ_L5_RATIO = 0.2;
 
 /* 使用 'var' 定义局部变量 */
 var mfc_purge_flow = 1200.34;
 var mfc_vent_flow = 321.23;
+
+var tv_value = 55.66;
+var tc_ceilling_temp = 1600;
+var tc_prepower = 1000.0;
 
 
 layer
@@ -57,7 +70,7 @@ layer
         
     };
 
-    until MFC12 = 34332.12;
+    until MFC12 = 34332.12; // this is a error expression, '=' is not allowed in until statement
     until MFC13 >= MFC12;
     until MFC13 == MFC12;
     until MFC14 <= MFC12 * (0.1 + mfc_vent_flow);
@@ -65,8 +78,42 @@ layer
     step "epi" 60
     {
        MFC6 flow MFC12; // MFC6流量计的流量值跟随MFC12
+
        V32 = V34; // Valve23输出状态等于Valve34输出状态
        V32 = !V34; // Valve23输出状态等于Valve34输出状态取反
+
+       TV = 444.2; // Set target pressure of TV by number
+       TV = tv_value; // set target pressure of TV by variable
+       TV => tv_value; // Pressure value ramp to target value
+
+       TC_Ceilling.Mode = Power; // Set mode to Power
+       TC_Ceilling.Mode = Pyro; // Set mode to Pyro
+       TC_Ceilling.Temp = 1600.0; // Temperature value set to target value
+       TC_Ceilling.Temp = T_Epi; // Temperature value set to target value
+       TC_Ceilling.Temp = tc_ceilling_temp; // Temperature value set to target value
+       TC_Ceilling.Temp => tc_ceilling_temp; // Temperature value ramp to target value
+       TC_Ceilling.Power = 1000.0; // Power value set to target value
+       TC_Ceilling.Power = T_PrePower; // Power value set to target value
+       TC_Ceilling.Power = tc_prepower; // Power value set to target value
+       TC_Ceilling.Power => tc_prepower; // Power value ramp to target value
+
+       RT.Mode = Power; // Set mode to Power
+       RT.Mode = Pyro; // Set mode to Pyro
+       RT.Temp = 1600.0; // Temperature value set to target value
+       RT.Temp = T_Epi; // Temperature value set to target value
+       RT.Temp = tc_ceilling_temp; // Temperature value set to target value
+       RT.Temp => tc_ceilling_temp; // Temperature value ramp to target value
+       RT.Power = 1000.0; // Power value set to target value
+       RT.Power = T_PrePower; // Power value set to target value
+       RT.Power = tc_prepower; // Power value set to target value
+       RT.Power => tc_prepower; // Power value ramp to target value
+
+       INJ.L1 = INJ_L1_RATIO * INJ_TOTL_Flow; // L1 flow rate set to target value
+       INJ.L2 = INJ_L2_RATIO * INJ_TOTL_Flow; // L2 flow rate set to target value
+       INJ.L3 = INJ_L3_RATIO * INJ_TOTL_Flow; // L3 flow rate set to target value
+       INJ.L4 = INJ_L4_RATIO * INJ_TOTL_Flow; // L4 flow rate set to target value
+       INJ.L5 = INJ_L5_RATIO * INJ_TOTL_Flow; // L5 flow rate ramp to target value
+
         
     };
 }
